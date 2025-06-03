@@ -2,57 +2,31 @@
 <html lang="tr">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Vision Bridge - HTML Manipülatörü</title>
-    <link rel="stylesheet" href="src/ui/style.css" />
-
-    <!-- js-yaml kütüphanesi -->
+    <title>Vision Bridge Test</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
   </head>
   <body>
-    <div class="container">
-      <!-- Header -->
-      <header class="header">
-        <h1>🌉 Vision Bridge</h1>
-        <p>HTML Manipülatörü - YAML ile DOM Düzenleme Aracı</p>
-      </header>
+    <h1>Test Sayfası</h1>
+    <script>
+      const testYaml = `
+actions:
+  - type: remove
+    selector: ".test"
+        `;
 
-      <!-- Ana İçerik -->
-      <main class="main-content">
-        <!-- YAML Upload Bölümü -->
-        <section class="upload-section">
-          <h2>📄 YAML Konfigürasyonu</h2>
-          <div class="file-upload">
-            <input type="file" id="yamlFile" accept=".yaml,.yml" />
-            <label for="yamlFile" class="upload-btn">
-              📁 YAML Dosyası Seç
-            </label>
-          </div>
-          <button id="processBtn" class="process-btn" disabled>
-            🚀 İşlemleri Uygula
-          </button>
-        </section>
+      const data = jsyaml.load(testYaml);
+      console.log("YAML Parse Test:", data);
+      const SUPPORTED_ACTIONS = ["remove", "replace", "insert", "alter"];
+      console.log("Desteklenen actionlar:", SUPPORTED_ACTIONS);
+      function validateAction(action, actionIndex) {
+        if (!action || typeof action !== "object") {
+          throw new Error(`${actionIndex}. action geçersiz format`);
+        }
 
-        <!-- URL Input Bölümü -->
-        <section class="url-section">
-          <h2>🌐 Hedef URL</h2>
-          <input type="url" id="targetUrl" placeholder="https://example.com" />
-          <button id="previewBtn" class="preview-btn">👁️ Önizleme</button>
-        </section>
+        console.log(`${actionIndex}. action kontrol ediliyor:`, action);
+      }
 
-        <!-- Log Bölümü -->
-        <section class="log-section">
-          <h2>📝 İşlem Logları</h2>
-          <div id="logArea" class="log-area"></div>
-          <button id="clearLogsBtn" class="clear-btn">🗑️ Temizle</button>
-        </section>
-      </main>
-    </div>
-
-    <!-- JavaScript Dosyaları -->
-    <script src="src/utils/helpers.js"></script>
-    <script src="src/ui/logger.js"></script>
-    <script src="src/parsers/yamlParser.js"></script>
-    <script src="src/core/main.js"></script>
+      validateAction({ type: "remove", selector: ".test" }, 1);
+    </script>
   </body>
 </html>

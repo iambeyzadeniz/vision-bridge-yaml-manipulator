@@ -1,5 +1,4 @@
 const SUPPORTED_ACTIONS = ["remove", "replace", "insert", "alter"];
-
 async function parseYamlContent(yamlContent) {
   try {
     const data = jsyaml.load(yamlContent);
