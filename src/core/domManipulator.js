@@ -89,9 +89,6 @@ function insertElement(target, newElementHTML, position = "append") {
     message: `Element eklendi (${position}): ${target}`,
   };
 }
-if (typeof module !== "undefined" && module.exports) {
-  module.exports = { removeElement, replaceElement, insertElement };
-}
 
 function alterElement(selector, property, value) {
   const element = document.querySelector(selector);
@@ -120,5 +117,13 @@ function alterElement(selector, property, value) {
   return {
     success: true,
     message: `Element özelliği değiştirildi: ${selector}.${property} = ${value}`,
+  };
+}
+if (typeof module !== "undefined" && module.exports) {
+  module.exports = {
+    removeElement,
+    replaceElement,
+    insertElement,
+    alterElement,
   };
 }
