@@ -2,31 +2,52 @@
 <html lang="tr">
   <head>
     <meta charset="UTF-8" />
-    <title>Vision Bridge Test</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>🌉 Vision Bridge - YAML DOM Manipulator</title>
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
   </head>
   <body>
-    <h1>Test Sayfası</h1>
-    <script>
-      const testYaml = `
-actions:
-  - type: remove
-    selector: ".test"
-        `;
+    <div class="container">
+      <div class="header">
+        <h1>🌉 Vision Bridge</h1>
+        <p>YAML tabanlı DOM Manipülasyon Aracı</p>
+      </div>
+      <div class="main-content">
+        //HTML panel
+        <div class="panel">
+          <h3>📄 HTML YÖNETİMİ</h3>
+          <input type="file" id="htmlFile" accept=".html,.htm" />
+          <label for="htmlFile">📁 HTML Dosyası Seç</label>
+          <button id="loadSampleHtml">📝 Örnek HTML Yükle</button>
+          <button id="resetHtml">🔄 HTML'i Resetle</button>
+          <textarea
+            id="htmlEditor"
+            placeholder="HTML kodunuz buraya gelecek..."
+          ></textarea>
+        </div>
+        //YAML panel
+        <div class="panel">
+          <h3>⚙️ YAML Konfigürasyonu</h3>
+          <input type="file" id="yamlFiles" accept=".yaml,.yml" multiple />
+          <label for="yamlFiles">📁 YAML Dosyaları Seç</label>
+          <button id="addSampleYaml">⚙️ Örnek YAML Ekle</button>
+          <button id="clearYamls">🗑️ YAML'ları Temizle</button>
 
-      const data = jsyaml.load(testYaml);
-      console.log("YAML Parse Test:", data);
-      const SUPPORTED_ACTIONS = ["remove", "replace", "insert", "alter"];
-      console.log("Desteklenen actionlar:", SUPPORTED_ACTIONS);
-      function validateAction(action, actionIndex) {
-        if (!action || typeof action !== "object") {
-          throw new Error(`${actionIndex}. action geçersiz format`);
-        }
-
-        console.log(`${actionIndex}. action kontrol ediliyor:`, action);
-      }
-
-      validateAction({ type: "remove", selector: ".test" }, 1);
-    </script>
+          <div id="yamlFilesList">Henüz YAML dosyası eklenmedi</div>
+          <textarea
+            id="yamlEditor"
+            placeholder="YAML konfigürasyonunuz buraya gelecek..."
+          ></textarea>
+          <button id="applyYamlConfigs">🚀 YAML'ları Uygula</button>
+          //LOG panel
+          <div class="panel">
+            <h3>📋 İşlem Logları</h3>
+            <div id="logArea">Vision Bridge hazır! İşlem bekleniyor...</div>
+            <button id="clearLogs">🗑️ Logları Temizle</button>
+          </div>
+        </div>
+      </div>
+    </div>
   </body>
 </html>
