@@ -1,4 +1,4 @@
-# vision-bridge-yaml-manipulator
+
 # Vision Bridge - YAML DOM Manipulator
 
 A JavaScript application that dynamically modifies webpages based on YAML configuration files.
