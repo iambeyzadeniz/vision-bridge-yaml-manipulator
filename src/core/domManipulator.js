@@ -15,7 +15,7 @@ function removeElement(selector) {
   };
 }
 
-function replaceElement(selector, newElementHTML) {
+function replaceElement(selector, newElement) {
   const element = document.querySelector(selector);
   console.log("Replace - Aranan element:", selector);
   console.log("Replace - Bulunan element:", element);
@@ -26,24 +26,24 @@ function replaceElement(selector, newElementHTML) {
     };
   }
   const tempDiv = document.createElement("div");
-  tempDiv.innerHTML = newElementHTML;
-  const newElement = tempDiv.firstElementChild;
-  console.log("Yeni element HTML:", newElementHTML);
-  console.log("Çevrilen element:", newElement);
-  if (!newElement) {
+  tempDiv.innerHTML = newElement;
+  const parsedElement = tempDiv.firstElementChild;
+  console.log("Yeni element HTML:", newElement);
+  console.log("Çevrilen element:", parsedElement);
+  if (!parsedElement) {
     return {
       success: false,
-      error: `Geçersiz HTML: ${newElementHTML}`,
+      error: `Geçersiz HTML: ${newElement}`,
     };
   }
-  element.replaceWith(newElement);
+  element.replaceWith(parsedElement);
   return {
     success: true,
     message: `Element değiştirildi: ${selector}`,
   };
 }
 
-function insertElement(target, newElementHTML, position = "append") {
+function insertElement(target, element, position = "append") {
   const targetElement = document.querySelector(target);
   console.log("Insert - Target element:", target);
   console.log("Insert - Bulunan target:", targetElement);
@@ -54,29 +54,29 @@ function insertElement(target, newElementHTML, position = "append") {
     };
   }
   const tempDiv = document.createElement("div");
-  tempDiv.innerHTML = newElementHTML;
-  const newElement = tempDiv.firstElementChild;
-  console.log("Insert - Yeni element HTML:", newElementHTML);
-  console.log("Insert - Çevrilen element:", newElement);
-  if (!newElement) {
+  tempDiv.innerHTML = element;
+  const parsedElement = tempDiv.firstElementChild;
+  console.log("Insert - Yeni element HTML:", element);
+  console.log("Insert - Çevrilen element:", parsedElement);
+  if (!parsedElement) {
     return {
       success: false,
-      error: `Geçersiz HTML: ${newElementHTML}`,
+      error: `Geçersiz HTML: ${element}`,
     };
   }
 
   switch (position) {
     case "prepend":
-      targetElement.prepend(newElement);
+      targetElement.prepend(parsedElement);
       break;
     case "append":
-      targetElement.append(newElement);
+      targetElement.append(parsedElement);
       break;
     case "before":
-      targetElement.before(newElement);
+      targetElement.before(parsedElement);
       break;
     case "after":
-      targetElement.after(newElement);
+      targetElement.after(parsedElement);
       break;
     default:
       return {
@@ -90,35 +90,79 @@ function insertElement(target, newElementHTML, position = "append") {
   };
 }
 
-function alterElement(selector, property, value) {
-  const element = document.querySelector(selector);
-  console.log("Alter - Aranan element:", selector);
-  console.log("Alter - Bulunan element:", element);
-  if (!element) {
+function alterElement(oldValue, newValue) {
+  console.log("🔍 Alter işlemi başlatıldı");
+  console.log("Alter - Eski Değer:", oldValue);
+  console.log("Alter - Yeni Değer:", newValue);
+
+  if (!oldValue || !newValue) {
     return {
       success: false,
-      error: `Element bulunamadı: ${selector}`,
+      error: "oldValue ve newValue boş olamaz",
     };
   }
-  try {
-    if (property.includes(".")) {
-      const [obj, prop] = property.split(".");
-      element[obj][prop] = value;
-    } else {
-      element[property] = value;
+  if (typeof oldValue !== "string" || typeof newValue !== "string") {
+    return {
+      success: false,
+      error: "oldValue ve newValue string olmalı",
+    };
+  }
+  console.log("✅ Parametreler geçerli");
+  console.log("🔍 DOM'da metin taranıyor...");
+
+  const walker = document.createTreeWalker(
+    document.body,
+    NodeFilter.SHOW_TEXT,
+    null,
+    false
+  );
+  const matchingNodes = [];
+  let node;
+  while ((node = walker.nextNode())) {
+    if (node.textContent.includes(oldValue)) {
+      matchingNodes.push(node);
+      console.log(`📝 Bulundu: "${node.textContent.trim()}"`);
     }
-  } catch (error) {
+  }
+  console.log(`📊 Toplam ${matchingNodes.length} yerde "${oldValue}" bulundu`);
+  if (matchingNodes.length === 0) {
     return {
       success: false,
-      error: `Özellik değiştirilemedi: ${property} - ${error.message}`,
+      error: `"${oldValue}" metni sayfada bulunamadı`,
     };
   }
+  let changedCount = 0;
+
+  matchingNodes.forEach((textNode, index) => {
+    const originalText = textNode.textContent;
+
+    // replaceAll: Tüm eşleşmeleri değiştir (replace sadece ilkini değiştirir)
+    const newText = originalText.replaceAll(oldValue, newValue);
+
+    // Gerçekten değişti mi kontrol et
+    if (originalText !== newText) {
+      textNode.textContent = newText;
+      changedCount++;
+
+      console.log(`🔄 ${index + 1}. değişim:`);
+      console.log(`   Eski: "${originalText.trim()}"`);
+      console.log(`   Yeni: "${newText.trim()}"`);
+    }
+  });
+  console.log(`✅ Alter işlemi tamamlandı: ${changedCount} değişiklik yapıldı`);
 
   return {
     success: true,
-    message: `Element özelliği değiştirildi: ${selector}.${property} = ${value}`,
+    message: `${changedCount} yerde "${oldValue}" → "${newValue}" değiştirildi`,
+    details: {
+      searched: oldValue,
+      replacement: newValue,
+      nodesFound: matchingNodes.length,
+      changesApplied: changedCount,
+    },
   };
 }
+
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
     removeElement,

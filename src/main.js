@@ -1,7 +1,6 @@
-import { parseYaml } from "./core/yamlParser.js";
-import { executeActions } from "./core/domManipulator.js";
+import { parseYamlContent } from "./core/yamlParser.js";
+import { executeActions } from "./core/actionHandler.js";
 import { createLogger } from "./ui/logger.js";
-
 let logger;
 let currentHtml = "";
 let yamlConfigs = [];
@@ -21,5 +20,29 @@ function setupEventListeners() {
     htmlFileInput.addEventListener("change", handleHtmlUpload);
   }
 
-  const applyButton = document.getElementById;
+  const applyButton = document.getElementById("applyYamlConfigs");
+  if (applyButton) {
+    applyButton.addEventListener("click", applyYamlConfigurations);
+  }
+  const yamlFilesInput = document.getElementById("yamlFiles");
+  if (yamlFilesInput) {
+    yamlFilesInput.addEventListener("change", handleYamlUpload);
+  }
+
+  const loadSampleHTMLBtn = document.getElementById("loadSampleHtml");
+  if (loadSampleHTMLBtn) {
+    loadSampleHTMLBtn.addEventListener("click", handleLoadSampleHtml);
+  }
+  const addSampleYamlBtn = document.getElementById("addSampleYaml");
+  if (addSampleYamlBtn) {
+    addSampleYamlBtn.addEventListener("click", handleAddSampleYaml);
+  }
+  const clearYamlsBtn = document.getElementById("clearYamls");
+  if (clearYamlsBtn) {
+    clearYamlsBtn.addEventListener("click", handleClearYamls);
+  }
+  const clearLogsBtn = document.getElementById("clearLogs");
+  if (clearLogsBtn) {
+    clearLogsBtn.addEventListener("click", handleClearLogs);
+  }
 }

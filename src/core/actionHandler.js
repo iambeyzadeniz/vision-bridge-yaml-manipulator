@@ -19,15 +19,11 @@ function executeAction(action) {
     case "remove":
       return removeElement(action.selector);
     case "replace":
-      return replaceElement(action.selector, action.newElementHTML);
+      return replaceElement(action.selector, action.newElement);
     case "insert":
-      return insertElement(
-        action.target,
-        action.newElementHTML,
-        action.position
-      );
+      return insertElement(action.target, action.element, action.position);
     case "alter":
-      return alterElement(action.selector, action.property, action.value);
+      return alterElement(action.oldValue, action.newValue);
 
     default:
       return {
