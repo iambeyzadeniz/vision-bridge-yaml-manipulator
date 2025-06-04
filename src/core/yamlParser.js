@@ -2,7 +2,6 @@ const SUPPORTED_ACTIONS = ["remove", "replace", "insert", "alter"];
 async function parseYamlContent(yamlContent) {
   try {
     const data = jsyaml.load(yamlContent);
-    console.log(data);
 
     if (!data || typeof data !== "object") {
       throw new Error("Geçersiz YAML formatı");
@@ -13,7 +12,6 @@ async function parseYamlContent(yamlContent) {
     if (data.actions.length === 0) {
       throw new Error("En az bir action tanımlanmalı");
     }
-    //Her action kontrol edildi.
     for (let i = 0; i < data.actions.length; i++) {
       validateAction(data.actions[i], i + 1);
     }
@@ -41,7 +39,7 @@ function validateAction(action, actionIndex) {
       }". Desteklenen: ${SUPPORTED_ACTIONS.join(", ")}`
     );
   }
-  if (!action.selector && action.type !== "insert") {
+  if (!action.selector && action.type !== "insert" && action.type !== "alter") {
     throw new Error(`${actionIndex}. action: selector gerekli`);
   }
   return true;
@@ -61,3 +59,4 @@ if (typeof module !== "undefined" && module.exports) {
     SUPPORTED_ACTIONS,
   };
 }
+export { parseYamlContent, validateAction, SUPPORTED_ACTIONS };

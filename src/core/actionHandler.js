@@ -6,7 +6,6 @@ import {
 } from "./domManipulator.js";
 
 function executeAction(action) {
-  console.log("Çalıştırılacak action:", action);
   const validTypes = ["remove", "replace", "insert", "alter"];
   if (!validTypes.includes(action.type)) {
     return {
@@ -33,33 +32,64 @@ function executeAction(action) {
   }
 }
 
-function executeActions(actions) {
-  console.log("Çalıştırılacak action listesi:", actions);
+function executeActions(htmlContent, actions) {
+  if (!htmlContent || typeof htmlContent !== "string") {
+    return {
+      success: false,
+      error: "HTML içeriği gerekli",
+      html: htmlContent,
+    };
+  }
+
   if (!Array.isArray(actions)) {
     return {
       success: false,
       error: "Actions bir array olmalı",
       received: typeof actions,
+      html: htmlContent,
     };
   }
+
   if (actions.length === 0) {
     return {
       success: true,
       message: "Çalıştırılacak action yok",
       total: 0,
+      html: htmlContent,
+      appliedCount: 0,
     };
   }
+
+  const iframe = document.getElementById("htmlPreview");
+  if (!iframe) {
+    return {
+      success: false,
+      error: "htmlPreview iframe'i bulunamadı",
+      html: htmlContent,
+    };
+  }
+
+  try {
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open();
+    doc.write(htmlContent);
+    doc.close();
+  } catch (error) {
+    return {
+      success: false,
+      error: `iframe'e HTML yüklenirken hata: ${error.message}`,
+      html: htmlContent,
+    };
+  }
+
   const results = [];
   let successCount = 0;
   let errorCount = 0;
-  console.log(`Toplam ${actions.length} action çalıştırılacak`);
 
   for (let i = 0; i < actions.length; i++) {
     const action = actions[i];
-    console.log(`\n--- Action ${i + 1}/${actions.length} ---`);
-    console.log("İşlenen action:", action);
     const result = executeAction(action);
-    console.log("Action sonucu:", result);
+
     results.push({
       index: i + 1,
       action: action,
@@ -68,24 +98,29 @@ function executeActions(actions) {
 
     if (result.success) {
       successCount++;
-      console.log(`✅ Action ${i + 1} başarılı`);
     } else {
       errorCount++;
-      console.log(`❌ Action ${i + 1} başarısız:`, result.error);
     }
   }
-  console.log(`\n=== ÖZET RAPOR ===`);
-  console.log(`Toplam: ${actions.length}`);
-  console.log(`Başarılı: ${successCount}`);
-  console.log(`Başarısız: ${errorCount}`);
+
+  let modifiedHtml = htmlContent;
+  try {
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    modifiedHtml = doc.documentElement.outerHTML;
+  } catch (error) {
+    console.error("❌ iframe'den HTML alınırken hata:", error);
+  }
 
   return {
     success: errorCount === 0,
+    html: modifiedHtml,
     total: actions.length,
+    appliedCount: successCount,
     successCount: successCount,
     errorCount: errorCount,
     summary: `${successCount}/${actions.length} action başarılı`,
     results: results,
   };
 }
+
 export { executeAction, executeActions };

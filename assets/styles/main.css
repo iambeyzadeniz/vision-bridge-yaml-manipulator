@@ -1,0 +1,339 @@
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 20px;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+  padding: 20px;
+  background: linear-gradient(135deg, #007bff, #0056b3);
+  color: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.header h1 {
+  margin: 0 0 10px 0;
+  font-size: 2.2rem;
+}
+
+.header p {
+  margin: 0;
+  font-size: 1.1rem;
+  opacity: 0.9;
+}
+
+.main-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  height: calc(100vh - 200px);
+  min-height: 600px;
+}
+
+.left-section {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  height: 100%;
+  min-height: 0;
+}
+
+.right-section {
+  height: 100%;
+  min-height: 0;
+}
+
+.bottom-section {
+  margin-top: 40px;
+  height: 10vh;
+  min-height: 400px;
+}
+
+.panel {
+  border: 2px solid #e0e0e0;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.panel-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 15px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.panel-header h3 {
+  margin: 0;
+  color: #333;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.html-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.yaml-panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.preview-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.log-panel {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+#htmlEditor,
+#yamlEditor {
+  border: none;
+  border-top: 1px solid #e0e0e0;
+  padding: 20px;
+  font-family: "JetBrains Mono", "Courier New", monospace;
+  font-size: 14px;
+  resize: none;
+  outline: none;
+  background: #fbfcfd;
+}
+
+#htmlEditor:focus,
+#yamlEditor:focus {
+  background: #ffffff;
+  box-shadow: inset 0 0 0 2px rgba(0, 123, 255, 0.15);
+}
+
+.preview-container {
+  flex: 1;
+  border-top: 1px solid #e0e0e0;
+  background: white;
+  overflow: hidden;
+}
+
+#htmlPreview {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
+  background: white;
+}
+
+#logArea {
+  flex: 1;
+  background: #1e1e1e;
+  color: #ffffff;
+  padding: 20px;
+  font-family: "JetBrains Mono", "Courier New", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  overflow-y: auto;
+  border-top: 1px solid #e0e0e0;
+}
+
+#yamlFilesList {
+  margin: 0;
+  padding: 15px 20px;
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+  color: #666;
+  font-size: 14px;
+  min-height: 40px;
+  max-height: 120px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+#yamlEditor {
+  flex: 1;
+  min-height: 150px;
+}
+
+#htmlEditor {
+  flex: 1;
+  min-height: 200px;
+}
+
+button {
+  padding: 8px 16px;
+  border: 1px solid #007bff;
+  background: #007bff;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+button:hover {
+  background: #0056b3;
+  border-color: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+button:active {
+  transform: translateY(0);
+  box-shadow: 0 1px 4px rgba(0, 123, 255, 0.2);
+}
+
+.btn-file {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #6c757d;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 1px solid #6c757d;
+  white-space: nowrap;
+}
+
+.btn-file:hover {
+  background: #545b62;
+  border-color: #545b62;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+}
+
+@media (max-width: 1024px) {
+  .main-layout {
+    grid-template-columns: 1fr;
+    gap: 15px;
+    height: auto;
+    min-height: calc(100vh - 200px);
+  }
+
+  .left-section {
+    gap: 15px;
+  }
+
+  .bottom-section {
+    height: 80vh;
+    margin-top: 30px;
+  }
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .main-layout {
+    height: auto;
+    min-height: calc(100vh - 180px);
+  }
+
+  .header h1 {
+    font-size: 1.8rem;
+  }
+
+  .header p {
+    font-size: 1rem;
+  }
+
+  .panel-header {
+    padding: 12px 15px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .button-group {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  #htmlEditor,
+  #yamlEditor {
+    padding: 15px;
+    font-size: 13px;
+  }
+
+  .bottom-section {
+    height: 60vh;
+    margin-top: 20px;
+  }
+
+  #logArea {
+    padding: 15px;
+    font-size: 12px;
+  }
+
+  #yamlFilesList {
+    max-height: 80px;
+    padding: 10px 15px;
+  }
+}
+
+#logArea::-webkit-scrollbar {
+  width: 8px;
+}
+
+#logArea::-webkit-scrollbar-track {
+  background: #2d2d2d;
+}
+
+#logArea::-webkit-scrollbar-thumb {
+  background: #555;
+  border-radius: 4px;
+}
+
+#logArea::-webkit-scrollbar-thumb:hover {
+  background: #777;
+}
+
+.panel:hover {
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
+  border-color: #d0d0d0;
+}
+
+.log-success {
+  color: #4ade80;
+}
+
+.log-error {
+  color: #f87171;
+}
+
+.log-warning {
+  color: #fbbf24;
+}
+
+.log-info {
+  color: #60a5fa;
+}

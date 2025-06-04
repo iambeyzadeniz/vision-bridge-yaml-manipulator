@@ -69,3 +69,12 @@ if (typeof module !== "undefined" && module.exports) {
     truncateText,
   };
 }
+export {
+  formatTimestamp,
+  generateId,
+  validateSelector,
+  formatFileSize,
+  escapeHtml,
+  getFileExtension,
+  truncateText,
+};

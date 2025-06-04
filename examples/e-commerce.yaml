@@ -1,0 +1,76 @@
+name: "E-Ticaret Konfigürasyonu"
+description: "E-Ticaret Yaml"
+actions:
+  - type: remove
+    selector: ".promotional-banner"
+
+  - type: remove
+    selector: ".legacy-banner"
+
+  - type: remove
+    selector: ".old-design-element"
+
+  - type: replace
+    selector: ".hero-title"
+    newElement: "<h1 class='hero-title'>🚀 Teknolojinin Geleceği Burada!</h1>"
+
+  - type: replace
+    selector: ".logo"
+    newElement: "<div class='logo'>🔥 TechStore Pro</div>"
+
+  - type: insert
+    position: "before"
+    target: ".hero-section"
+    element: "<div style='background: linear-gradient(90deg, #ff6b6b, #4ecdc4); color: white; text-align: center; padding: 15px; font-weight: bold; animation: pulse 2s infinite;'>⭐ YENİ YILDA YENİ FIYATLAR! Ücretsiz Kargo + %30 İndirim ⭐</div>"
+
+  - type: insert
+    position: "after"
+    target: ".footer"
+    element: "<section style='background: #1a252f; color: white; padding: 2rem 0; text-align: center;'><div class='container'><h3 style='margin-bottom: 1rem;'>🌟 Bizi Takip Edin</h3><div style='display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;'><a href '#' style='color: #3b5998; font-size: 2rem; text-decoration: none;'>📘 Facebook</a><a href='#' style='color: #1da1f2; font-size: 2rem; text-decoration: none;'>🐦 Twitter</a><a href='#' style='color: #e4405f; font-size: 2rem; text-decoration: none;'>📷 Instagram</a><a href='#' style='color: #ff0000; font-size: 2rem; text-decoration: none;'>📺 YouTube</a></div></div></section>"
+
+  - type: alter
+    oldValue: "Machine Learning"
+    newValue: "Yapay Zeka (AI)"
+
+  - type: alter
+    oldValue: "₺45.000"
+    newValue: "₺49.999"
+
+  - type: replace
+    selector: ".newsletter-title"
+    newElement: "<h2 class='newsletter-title'>📧 Özel Fırsatları Kaçırma!</h2>"
+
+  - type: insert
+    position: "after"
+    target: ".hero-section .btn"
+    element: "<a href='#iletisim' class='btn' style='background: #27ae60; margin-left: 1rem;'>📞 Bize Danış</a>"
+
+  - type: insert
+    position: "prepend"
+    target: ".product-card:first-child .product-info"
+    element: "<div style='position: absolute; top: 10px; right: 10px; background: #e74c3c; color: white; padding: 5px 10px; border-radius: 15px; font-size: 0.8rem; font-weight: bold;'>🔥 YENİ!</div>"
+
+  - type: alter
+    oldValue: "süper hızlı"
+    newValue: "lightning hızında"
+
+  - type: alter
+    oldValue: "Kesinlikle tavsiye ederim!"
+    newValue: "5 yıldır kullanıyorum, mükemmel! ⭐⭐⭐⭐⭐"
+
+  - type: alter
+    oldValue: "Ana Sayfa"
+    newValue: "🏠 Ana Sayfa"
+
+  - type: alter
+    oldValue: "Ürünler"
+    newValue: "🛍️ Ürünler"
+
+  - type: alter
+    oldValue: "2024"
+    newValue: "2024-2025"
+
+  - type: insert
+    position: "before"
+    target: ".testimonials-section"
+    element: "<section style='background: #f8f9fa; border-left: 5px solid #007bff; padding: 2rem; margin: 2rem 0;'><div class='container'><h3 style='color: #007bff; margin-bottom: 1rem;'>💡 Neden TechStore?</h3><div style='display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;'><div style='text-align: center;'><div style='font-size: 2rem; margin-bottom: 0.5rem;'>🚚</div><h4>Hızlı Teslimat</h4><p>24 saat içinde kapınızda</p></div><div style='text-align: center;'><div style='font-size: 2rem; margin-bottom: 0.5rem;'>🔒</div><h4>Güvenli Ödeme</h4><p>256-bit SSL şifreleme</p></div><div style='text-align: center;'><div style='font-size: 2rem; margin-bottom: 0.5rem;'>🎯</div><h4>Orijinal Ürün</h4><p>%100 orjinal garantisi</p></div><div style='text-align: center;'><div style='font-size: 2rem; margin-bottom: 0.5rem;'>💬</div><h4>7/24 Destek</h4><p>Her zaman yanınızda</p></div></div></div></section>"

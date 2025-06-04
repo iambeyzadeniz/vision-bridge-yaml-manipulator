@@ -1,7 +1,28 @@
+function getIframeDocument() {
+  const iframe = document.getElementById("htmlPreview");
+  if (!iframe) {
+    console.error("❌ htmlPreview iframe'i bulunamadı");
+    return null;
+  }
+
+  const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+  if (!iframeDoc) {
+    console.error("❌ iframe document'ine erişilemiyor");
+    return null;
+  }
+
+  return iframeDoc;
+}
+
 function removeElement(selector) {
-  const element = document.querySelector(selector);
-  console.log("Aranan element:", selector);
-  console.log("Bulunan element:", element);
+  const iframeDoc = getIframeDocument();
+  if (!iframeDoc) {
+    return {
+      success: false,
+      error: "iframe document'ine erişilemiyor",
+    };
+  }
+  const element = iframeDoc.querySelector(selector);
   if (!element) {
     return {
       success: false,
@@ -16,9 +37,14 @@ function removeElement(selector) {
 }
 
 function replaceElement(selector, newElement) {
-  const element = document.querySelector(selector);
-  console.log("Replace - Aranan element:", selector);
-  console.log("Replace - Bulunan element:", element);
+  const iframeDoc = getIframeDocument();
+  if (!iframeDoc) {
+    return {
+      success: false,
+      error: "iframe document'ine erişilemiyor",
+    };
+  }
+  const element = iframeDoc.querySelector(selector);
   if (!element) {
     return {
       success: false,
@@ -28,8 +54,6 @@ function replaceElement(selector, newElement) {
   const tempDiv = document.createElement("div");
   tempDiv.innerHTML = newElement;
   const parsedElement = tempDiv.firstElementChild;
-  console.log("Yeni element HTML:", newElement);
-  console.log("Çevrilen element:", parsedElement);
   if (!parsedElement) {
     return {
       success: false,
@@ -44,9 +68,14 @@ function replaceElement(selector, newElement) {
 }
 
 function insertElement(target, element, position = "append") {
-  const targetElement = document.querySelector(target);
-  console.log("Insert - Target element:", target);
-  console.log("Insert - Bulunan target:", targetElement);
+  const iframeDoc = getIframeDocument();
+  if (!iframeDoc) {
+    return {
+      success: false,
+      error: "iframe document'ine erişilemiyor",
+    };
+  }
+  const targetElement = iframeDoc.querySelector(target);
   if (!targetElement) {
     return {
       success: false,
@@ -56,8 +85,6 @@ function insertElement(target, element, position = "append") {
   const tempDiv = document.createElement("div");
   tempDiv.innerHTML = element;
   const parsedElement = tempDiv.firstElementChild;
-  console.log("Insert - Yeni element HTML:", element);
-  console.log("Insert - Çevrilen element:", parsedElement);
   if (!parsedElement) {
     return {
       success: false,
@@ -91,10 +118,6 @@ function insertElement(target, element, position = "append") {
 }
 
 function alterElement(oldValue, newValue) {
-  console.log("🔍 Alter işlemi başlatıldı");
-  console.log("Alter - Eski Değer:", oldValue);
-  console.log("Alter - Yeni Değer:", newValue);
-
   if (!oldValue || !newValue) {
     return {
       success: false,
@@ -107,13 +130,24 @@ function alterElement(oldValue, newValue) {
       error: "oldValue ve newValue string olmalı",
     };
   }
-  console.log("✅ Parametreler geçerli");
-  console.log("🔍 DOM'da metin taranıyor...");
+  const iframeDoc = getIframeDocument();
+  if (!iframeDoc) {
+    return {
+      success: false,
+      error: "iframe document'ine erişilemiyor",
+    };
+  }
 
-  const walker = document.createTreeWalker(
-    document.body,
+  const walker = iframeDoc.createTreeWalker(
+    iframeDoc.body || iframeDoc.documentElement,
     NodeFilter.SHOW_TEXT,
-    null,
+    {
+      acceptNode: function (node) {
+        return node.textContent.trim().length > 0
+          ? NodeFilter.FILTER_ACCEPT
+          : NodeFilter.FILTER_REJECT;
+      },
+    },
     false
   );
   const matchingNodes = [];
@@ -121,10 +155,9 @@ function alterElement(oldValue, newValue) {
   while ((node = walker.nextNode())) {
     if (node.textContent.includes(oldValue)) {
       matchingNodes.push(node);
-      console.log(`📝 Bulundu: "${node.textContent.trim()}"`);
     }
   }
-  console.log(`📊 Toplam ${matchingNodes.length} yerde "${oldValue}" bulundu`);
+
   if (matchingNodes.length === 0) {
     return {
       success: false,
@@ -136,20 +169,13 @@ function alterElement(oldValue, newValue) {
   matchingNodes.forEach((textNode, index) => {
     const originalText = textNode.textContent;
 
-    // replaceAll: Tüm eşleşmeleri değiştir (replace sadece ilkini değiştirir)
     const newText = originalText.replaceAll(oldValue, newValue);
 
-    // Gerçekten değişti mi kontrol et
     if (originalText !== newText) {
       textNode.textContent = newText;
       changedCount++;
-
-      console.log(`🔄 ${index + 1}. değişim:`);
-      console.log(`   Eski: "${originalText.trim()}"`);
-      console.log(`   Yeni: "${newText.trim()}"`);
     }
   });
-  console.log(`✅ Alter işlemi tamamlandı: ${changedCount} değişiklik yapıldı`);
 
   return {
     success: true,
@@ -171,3 +197,4 @@ if (typeof module !== "undefined" && module.exports) {
     alterElement,
   };
 }
+export { removeElement, replaceElement, insertElement, alterElement };

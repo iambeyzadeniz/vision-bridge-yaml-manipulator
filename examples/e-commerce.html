@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TechStore - Elektronik Alışveriş</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+      }
+
+      .header {
+        background: #2c3e50;
+        color: white;
+        padding: 1rem 0;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      .nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-size: 1.5rem;
+        font-weight: bold;
+      }
+
+      .nav-links {
+        display: flex;
+        list-style: none;
+        gap: 2rem;
+      }
+
+      .nav-links a {
+        color: white;
+        text-decoration: none;
+      }
+
+      .promotional-banner {
+        background: #e74c3c;
+        color: white;
+        text-align: center;
+        padding: 10px;
+        font-weight: bold;
+      }
+
+      .hero-section {
+        background: linear-gradient(135deg, #3498db, #2980b9);
+        color: white;
+        padding: 4rem 0;
+        text-align: center;
+      }
+
+      .hero-title {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+      }
+
+      .hero-subtitle {
+        font-size: 1.2rem;
+        margin-bottom: 2rem;
+      }
+
+      .btn {
+        display: inline-block;
+        background: #e74c3c;
+        color: white;
+        padding: 12px 30px;
+        text-decoration: none;
+        border-radius: 5px;
+        font-weight: bold;
+        transition: background 0.3s;
+      }
+
+      .btn:hover {
+        background: #c0392b;
+      }
+
+      .products-section {
+        padding: 4rem 0;
+      }
+
+      .section-title {
+        text-align: center;
+        font-size: 2.5rem;
+        margin-bottom: 3rem;
+        color: #2c3e50;
+      }
+
+      .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+      }
+
+      .product-card {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s;
+      }
+
+      .product-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .product-image {
+        width: 100%;
+        height: 200px;
+        background: #f8f9fa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3rem;
+        color: #6c757d;
+      }
+
+      .product-info {
+        padding: 1.5rem;
+      }
+
+      .product-title {
+        font-size: 1.3rem;
+        margin-bottom: 0.5rem;
+        color: #2c3e50;
+      }
+
+      .product-price {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #e74c3c;
+        margin-bottom: 1rem;
+      }
+
+      .old-price {
+        text-decoration: line-through;
+        color: #6c757d;
+        font-size: 1rem;
+        margin-right: 10px;
+      }
+
+      .product-description {
+        color: #666;
+        margin-bottom: 1rem;
+        line-height: 1.5;
+      }
+
+      .add-to-cart {
+        width: 100%;
+        background: #27ae60;
+        color: white;
+        border: none;
+        padding: 12px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.3s;
+      }
+
+      .add-to-cart:hover {
+        background: #219a52;
+      }
+
+      .testimonials-section {
+        background: #f8f9fa;
+        padding: 4rem 0;
+      }
+
+      .testimonials-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+      }
+
+      .testimonial-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 10px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .testimonial-text {
+        font-style: italic;
+        margin-bottom: 1rem;
+        line-height: 1.6;
+      }
+
+      .testimonial-author {
+        font-weight: bold;
+        color: #2c3e50;
+      }
+
+      .newsletter-section {
+        background: #34495e;
+        color: white;
+        padding: 3rem 0;
+        text-align: center;
+      }
+
+      .newsletter-title {
+        font-size: 2rem;
+        margin-bottom: 1rem;
+      }
+
+      .newsletter-form {
+        display: flex;
+        max-width: 500px;
+        margin: 0 auto;
+        gap: 1rem;
+      }
+
+      .newsletter-input {
+        flex: 1;
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        font-size: 1rem;
+      }
+
+      .newsletter-btn {
+        background: #e74c3c;
+        color: white;
+        border: none;
+        padding: 12px 20px;
+        border-radius: 5px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .footer {
+        background: #2c3e50;
+        color: white;
+        padding: 2rem 0;
+      }
+
+      .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+      }
+
+      .footer-section h3 {
+        margin-bottom: 1rem;
+      }
+
+      .footer-section ul {
+        list-style: none;
+      }
+
+      .footer-section ul li {
+        margin-bottom: 0.5rem;
+      }
+
+      .footer-section ul li a {
+        color: #bdc3c7;
+        text-decoration: none;
+      }
+
+      .footer-bottom {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #34495e;
+        color: #bdc3c7;
+      }
+
+      .old-design-element {
+        background: #95a5a6;
+        color: white;
+        padding: 1rem;
+        text-align: center;
+        margin: 2rem 0;
+      }
+
+      .legacy-banner {
+        background: #f39c12;
+        color: white;
+        padding: 15px;
+        text-align: center;
+        font-weight: bold;
+      }
+
+      @media (max-width: 768px) {
+        .hero-title {
+          font-size: 2rem;
+        }
+
+        .newsletter-form {
+          flex-direction: column;
+        }
+
+        .nav-links {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="promotional-banner">
+      ⚡ BÜYÜK İNDİRİM! Tüm elektronik ürünlerde %50'ye varan indirim! ⚡
+    </div>
+
+    <header class="header">
+      <div class="container">
+        <nav class="nav">
+          <div class="logo">TechStore</div>
+          <ul class="nav-links">
+            <li><a href="#anasayfa">Ana Sayfa</a></li>
+            <li><a href="#urunler">Ürünler</a></li>
+            <li><a href="#hakkimizda">Hakkımızda</a></li>
+            <li><a href="#iletisim">İletişim</a></li>
+          </ul>
+        </nav>
+      </div>
+    </header>
+
+    <div class="legacy-banner">Bu eski tasarım banner'ı kaldırılacak</div>
+
+    <section class="hero-section">
+      <div class="container">
+        <h1 class="hero-title">En Yeni Teknoloji Ürünleri</h1>
+        <p class="hero-subtitle">
+          Kaliteli elektronik ürünler, uygun fiyatlar ve hızlı teslimat
+        </p>
+        <a href="#urunler" class="btn">Ürünleri İncele</a>
+      </div>
+    </section>
+
+    <section class="products-section" id="urunler">
+      <div class="container">
+        <h2 class="section-title">Öne Çıkan Ürünler</h2>
+
+        <div class="products-grid">
+          <div class="product-card">
+            <div class="product-image">📱</div>
+            <div class="product-info">
+              <h3 class="product-title">iPhone 15 Pro Max</h3>
+              <div class="product-price">
+                <span class="old-price">₺45.000</span>
+                ₺39.999
+              </div>
+              <p class="product-description">
+                Gelişmiş kamera sistemi, A17 Pro çip ve titanyum tasarım ile
+                geleceğin akıllı telefonu.
+              </p>
+              <button class="add-to-cart">Sepete Ekle</button>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="product-image">💻</div>
+            <div class="product-info">
+              <h3 class="product-title">MacBook Air M2</h3>
+              <div class="product-price">
+                <span class="old-price">₺32.000</span>
+                ₺28.999
+              </div>
+              <p class="product-description">
+                Şüphe yok, şu an sistemde mevcut en popüler dizüstü bilgisayar.
+                Machine Learning desteği ile süper hızlı.
+              </p>
+              <button class="add-to-cart">Sepete Ekle</button>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="product-image">🎧</div>
+            <div class="product-info">
+              <h3 class="product-title">AirPods Pro (2. Nesil)</h3>
+              <div class="product-price">
+                <span class="old-price">₺8.000</span>
+                ₺6.999
+              </div>
+              <p class="product-description">
+                Aktif gürültü engelleme ve şeffaflık modu ile mükemmel ses
+                deneyimi.
+              </p>
+              <button class="add-to-cart">Sepete Ekle</button>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div class="product-image">⌚</div>
+            <div class="product-info">
+              <h3 class="product-title">Apple Watch Series 9</h3>
+              <div class="product-price">
+                <span class="old-price">₺12.000</span>
+                ₺9.999
+              </div>
+              <p class="product-description">
+                Sağlık takibi, fitness özellikleri ve akıllı bildirimler ile
+                günlük hayatınızı kolaylaştırın.
+              </p>
+              <button class="add-to-cart">Sepete Ekle</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="old-design-element">
+          Bu eski tasarım elementi kaldırılacak - Eski reklam alanı
+        </div>
+      </div>
+    </section>
+
+    <section class="testimonials-section">
+      <div class="container">
+        <h2 class="section-title">Müşteri Yorumları</h2>
+
+        <div class="testimonials-grid">
+          <div class="testimonial-card">
+            <p class="testimonial-text">
+              "TechStore'dan aldığım iPhone gerçekten harika! Hızlı teslimat ve
+              mükemmel müşteri hizmetleri için teşekkürler."
+            </p>
+            <p class="testimonial-author">- Ahmet Yılmaz</p>
+          </div>
+
+          <div class="testimonial-card">
+            <p class="testimonial-text">
+              "MacBook Air M2'yi buradan aldım. Machine Learning projelerim için
+              mükemmel performans sunuyor. Kesinlikle tavsiye ederim!"
+            </p>
+            <p class="testimonial-author">- Zeynep Kaya</p>
+          </div>
+
+          <div class="testimonial-card">
+            <p class="testimonial-text">
+              "Fiyatlar çok uygun ve ürün kalitesi harika. Machine Learning
+              eğitimlerim için aldığım laptop tam istediğim gibi çalışıyor."
+            </p>
+            <p class="testimonial-author">- Mehmet Öz</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="newsletter-section">
+      <div class="container">
+        <h2 class="newsletter-title">Kampanyalardan Haberdar Olun</h2>
+        <p>E-posta adresinizi girin, özel fırsatları kaçırmayın!</p>
+        <form class="newsletter-form">
+          <input
+            type="email"
+            class="newsletter-input"
+            placeholder="E-posta adresiniz..."
+          />
+          <button type="submit" class="newsletter-btn">Abone Ol</button>
+        </form>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-section">
+            <h3>Kurumsal</h3>
+            <ul>
+              <li><a href="#hakkimizda">Hakkımızda</a></li>
+              <li><a href="#kariyer">Kariyer</a></li>
+              <li><a href="#basin">Basın</a></li>
+              <li><a href="#yatirimci">Yatırımcı İlişkileri</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h3>Destek</h3>
+            <ul>
+              <li><a href="#yardim">Yardım Merkezi</a></li>
+              <li><a href="#iletisim">İletişim</a></li>
+              <li><a href="#iade">İade ve Değişim</a></li>
+              <li><a href="#garanti">Garanti Koşulları</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h3>Hesabım</h3>
+            <ul>
+              <li><a href="#giris">Giriş Yap</a></li>
+              <li><a href="#kayit">Kayıt Ol</a></li>
+              <li><a href="#siparisler">Siparişlerim</a></li>
+              <li><a href="#favoriler">Favori Ürünler</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-section">
+            <h3>Sosyal Medya</h3>
+            <ul>
+              <li><a href="#facebook">Facebook</a></li>
+              <li><a href="#twitter">Twitter</a></li>
+              <li><a href="#instagram">Instagram</a></li>
+              <li><a href="#youtube">YouTube</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          <p>
+            &copy; 2024 TechStore. Tüm hakları saklıdır. | Gizlilik Politikası |
+            Kullanım Koşulları
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

@@ -29,6 +29,11 @@ function setupEventListeners() {
     yamlFilesInput.addEventListener("change", handleYamlUpload);
   }
 
+  const resetHtmlButton = document.getElementById("resetHtml");
+  if (resetHtmlButton) {
+    resetHtmlButton.addEventListener("click", handleResetHtml);
+    logger.info("✅ Reset HTML listener bağlandı");
+  }
   const loadSampleHTMLBtn = document.getElementById("loadSampleHtml");
   if (loadSampleHTMLBtn) {
     loadSampleHTMLBtn.addEventListener("click", handleLoadSampleHtml);
@@ -45,6 +50,17 @@ function setupEventListeners() {
   if (clearLogsBtn) {
     clearLogsBtn.addEventListener("click", handleClearLogs);
   }
+  const refreshPreviewBtn = document.getElementById("refreshPreview");
+  if (refreshPreviewBtn) {
+    refreshPreviewBtn.addEventListener("click", handleRefreshPreview);
+    logger.info("✅ Refresh Preview listener bağlandı");
+  }
+
+  const openInNewTabBtn = document.getElementById("openInNewTab");
+  if (openInNewTabBtn) {
+    openInNewTabBtn.addEventListener("click", handleOpenInNewTab);
+    logger.info("✅ Open In New Tab listener bağlandı");
+  }
 }
 
 function handleHtmlUpload(event) {
@@ -57,14 +73,14 @@ function handleHtmlUpload(event) {
   const fileExtension = getFileExtension(file.name);
   if (fileExtension !== "html" && fileExtension !== "htm") {
     logger.error("❌ Lütfen .html veya .htm dosyası seçin");
-    event.target.value = ""; // Input'u temizle
+    event.target.value = "";
     return;
   }
   logger.info(`📄 Dosya: ${file.name} (${formatFileSize(file.size)})`);
   const reader = new FileReader();
   reader.onload = function (e) {
     try {
-      currentHtml = e.target.result; // HTML içeriğini global değişkene kaydet
+      currentHtml = e.target.result;
 
       logger.success(`✅ HTML dosyası yüklendi: ${file.name}`);
       logger.info(`📊 İçerik uzunluğu: ${currentHtml.length} karakter`);
@@ -90,8 +106,65 @@ function displayHtmlInEditor(htmlContent) {
 
   htmlEditor.value = htmlContent;
   logger.success("📝 HTML kodu editörde gösterildi");
+  displayHtmlPreview(htmlContent);
 }
-function applyYamlConfigurations() {
+function displayHtmlPreview(htmlContent) {
+  const iframe = document.getElementById("htmlPreview");
+
+  if (!iframe) {
+    logger.warning("⚠️ HTML preview iframe'i bulunamadı");
+    return;
+  }
+
+  if (!htmlContent || htmlContent.trim() === "") {
+    logger.warning("⚠️ Preview için HTML içeriği boş");
+    return;
+  }
+
+  try {
+    const doc = iframe.contentDocument || iframe.contentWindow.document;
+    doc.open();
+    doc.write(htmlContent);
+    doc.close();
+
+    logger.success("👁️ HTML önizlemesi güncellendi");
+  } catch (error) {
+    logger.error(`❌ Preview güncellenirken hata: ${error.message}`);
+  }
+}
+function handleRefreshPreview() {
+  debugger;
+  logger.info("🔄 HTML önizlemesi yenileniyor...");
+
+  if (!currentHtml || currentHtml.trim() === "") {
+    logger.warning("⚠️ Gösterilecek HTML yok! Önce HTML yükleyin.");
+    return;
+  }
+
+  displayHtmlPreview(currentHtml);
+}
+
+function handleOpenInNewTab() {
+  logger.info("🔗 HTML yeni sekmede açılıyor...");
+
+  if (!currentHtml || currentHtml.trim() === "") {
+    logger.warning("⚠️ Açılacak HTML yok! Önce HTML yükleyin.");
+    return;
+  }
+
+  try {
+    const blob = new Blob([currentHtml], { type: "text/html" });
+    const url = URL.createObjectURL(blob);
+    window.open(url, "_blank");
+
+    logger.success("✅ HTML yeni sekmede açıldı");
+
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (error) {
+    logger.error(`❌ HTML açılırken hata: ${error.message}`);
+  }
+}
+async function applyYamlConfigurations() {
   logger.info("🚀 YAML konfigürasyonları uygulanıyor...");
   if (!currentHtml || currentHtml.trim() === "") {
     logger.error("❌ Önce bir HTML dosyası yükleyin!");
@@ -110,13 +183,13 @@ function applyYamlConfigurations() {
 
     try {
       logger.info(`📋 YAML ${i + 1} parse ediliyor...`);
-      const parsedConfig = parseYamlContent(yamlContent);
+      const parsedConfig = await parseYamlContent(yamlContent);
 
-      if (parsedConfig && parsedConfig.actions) {
+      if (parsedConfig && parsedConfig.data.actions) {
         parsedConfigs.push(parsedConfig);
         logger.success(
           `✅ YAML ${i + 1} başarıyla parse edildi (${
-            parsedConfig.actions.length
+            parsedConfig.data.actions.length
           } aksiyon)`
         );
       } else {
@@ -137,21 +210,49 @@ function applyYamlConfigurations() {
     const config = parsedConfigs[i];
 
     try {
-      logger.info(`📋 "${config.name}" konfigürasyonu uygulanıyor...`);
+      logger.info(`📋 "${config.data.name}" konfigürasyonu uygulanıyor...`);
 
-      const result = executeActions(modifiedHtml, config.actions);
+      const result = executeActions(modifiedHtml, config.data.actions);
 
       if (result.success) {
         modifiedHtml = result.html;
         totalActionsApplied += result.appliedCount;
         logger.success(
-          `✅ "${config.name}" başarıyla uygulandı (${result.appliedCount} aksiyon)`
+          `✅ "${config.data.name}" başarıyla uygulandı (${result.appliedCount} aksiyon)`
         );
       } else {
-        logger.error(`❌ "${config.name}" uygulanırken hata: ${result.error}`);
+        const errorDetails = generateErrorReport(result);
+
+        logger.error(
+          `❌ "${config.data.name}" kısmi başarı: ${result.summary}`
+        );
+        logger.warning(
+          `📊 Başarılı: ${result.successCount}, Başarısız: ${result.errorCount}`
+        );
+
+        if (result.results && result.results.length > 0) {
+          result.results.forEach((actionResult) => {
+            if (!actionResult.result.success) {
+              const action = actionResult.action;
+              const actionDesc = getActionDescription(action);
+              logger.error(`   💥 Action ${actionResult.index}: ${actionDesc}`);
+              logger.error(`      ➤ Hata: ${actionResult.result.error}`);
+            }
+          });
+        }
+
+        if (result.successCount > 0) {
+          logger.info(
+            `💡 ${result.successCount} aksiyon başarıyla uygulandı, HTML güncellendi`
+          );
+          modifiedHtml = result.html;
+          totalActionsApplied += result.appliedCount;
+        }
       }
     } catch (error) {
-      logger.error(`❌ "${config.name}" beklenmeyen hata: ${error.message}`);
+      logger.error(
+        `❌ "${config.data.name}" beklenmeyen hata: ${error.message}`
+      );
     }
   }
   if (totalActionsApplied === 0) {
@@ -164,9 +265,45 @@ function applyYamlConfigurations() {
   logger.info(
     `📄 HTML içerik uzunluğu: ${currentHtml.length} → ${modifiedHtml.length} karakter`
   );
-  currentHtml = modifiedHtml;
-  displayHtmlInEditor(currentHtml);
+
+  displayHtmlInEditor(modifiedHtml);
   logger.success("✅ İşlem tamamlandı! HTML editörde güncellendi.");
+}
+function getActionDescription(action) {
+  switch (action.type) {
+    case "remove":
+      return `Element sil: "${action.selector}"`;
+    case "replace":
+      return `Element değiştir: "${action.selector}"`;
+    case "insert":
+      return `Element ekle: "${action.target}" (${action.position})`;
+    case "alter":
+      return `Metin değiştir: "${action.oldValue}" → "${action.newValue}"`;
+    case "style":
+      return `Stil uygula: "${action.selector}" (${action.property}: ${action.value})`;
+    case "content":
+      return `İçerik değiştir: "${action.selector}"`;
+    case "attribute":
+      return `Attribute değiştir: "${action.selector}" (${action.attribute})`;
+    default:
+      return `${action.type} işlemi`;
+  }
+}
+
+function generateErrorReport(result) {
+  const errors = result.results
+    .filter((r) => !r.result.success)
+    .map((r) => ({
+      action: r.index,
+      type: r.action.type,
+      error: r.result.error,
+    }));
+
+  return {
+    totalErrors: errors.length,
+    errorTypes: [...new Set(errors.map((e) => e.type))],
+    errors: errors,
+  };
 }
 function handleYamlUpload(event) {
   logger.info("📋 YAML dosyaları yükleniyor...");
@@ -219,7 +356,6 @@ function handleYamlUpload(event) {
           `📄 ${file.name} okundu (${yamlContent.length} karakter)`
         );
         if (filesRead === validFiles.length) {
-          // Hepsi okundu
           finishYamlUpload(newYamlConfigs);
         }
       } catch (error) {
@@ -248,6 +384,21 @@ function finishYamlUpload(newYamlConfigs) {
     return;
   }
   yamlConfigs.push(...newYamlConfigs);
+  updateYamlFilesList();
+  const yamlEditor = document.getElementById("yamlEditor");
+  if (yamlEditor && newYamlConfigs.length > 0) {
+    if (newYamlConfigs.length === 1) {
+      yamlEditor.value = newYamlConfigs[0];
+      logger.info("📝 YAML editörde gösterildi");
+    } else {
+      const combinedYaml = newYamlConfigs.join("\n\n---\n\n");
+      yamlEditor.value = combinedYaml;
+      logger.info(
+        `📝 ${newYamlConfigs.length} YAML birleştirilip editörde gösterildi`
+      );
+    }
+  }
+
   logger.success(
     `✅ ${newYamlConfigs.length} YAML dosyası başarıyla yüklendi!`
   );
@@ -255,3 +406,186 @@ function finishYamlUpload(newYamlConfigs) {
 
   logger.success("🎉 YAML dosyaları hazır! Artık HTML'e uygulayabilirsiniz.");
 }
+function updateYamlFilesList() {
+  const yamlFilesList = document.getElementById("yamlFilesList");
+
+  if (!yamlFilesList) {
+    logger.warning("⚠️ yamlFilesList elementi bulunamadı");
+    return;
+  }
+
+  if (!yamlConfigs || yamlConfigs.length === 0) {
+    yamlFilesList.innerHTML = "Henüz YAML dosyası eklenmedi";
+    yamlFilesList.style.color = "#666";
+    return;
+  }
+
+  let html = `<div style="margin: 10px 0;">
+      <strong>📋 Yüklü YAML Dosyaları (${yamlConfigs.length})</strong>
+    </div>`;
+
+  yamlConfigs.forEach((yamlContent, index) => {
+    let yamlName = `YAML ${index + 1}`;
+    try {
+      const data = jsyaml.load(yamlContent);
+      if (data && data.name) {
+        yamlName = data.name;
+      }
+    } catch (error) {}
+
+    const yamlPreview =
+      yamlContent.substring(0, 50) + (yamlContent.length > 50 ? "..." : "");
+
+    html += `
+        <div style="border: 1px solid #ddd; margin: 5px 0; padding: 8px; border-radius: 4px; background: #f9f9f9;">
+          <div style="font-weight: bold; color: #333;">📄 ${yamlName}</div>
+          <div style="font-size: 12px; color: #666; font-family: monospace;">${yamlPreview}</div>
+          <div style="font-size: 11px; color: #999;">${yamlContent.length} karakter</div>
+        </div>
+      `;
+  });
+
+  yamlFilesList.innerHTML = html;
+  yamlFilesList.style.color = "#333";
+}
+function handleClearLogs() {
+  logger.info("🧹 Loglar temizleniyor...");
+  logger.clear();
+  logger.success("✅ Tüm loglar temizlendi!");
+}
+function handleClearYamls() {
+  logger.info("🗑️ YAML konfigürasyonları temizleniyor...");
+  yamlConfigs = [];
+  const yamlFilesInput = document.getElementById("yamlFiles");
+  if (yamlFilesInput) {
+    yamlFilesInput.value = "";
+  }
+  const yamlEditor = document.getElementById("yamlEditor");
+  if (yamlEditor) {
+    yamlEditor.value = "";
+  }
+
+  updateYamlFilesList();
+
+  logger.success(
+    `✅ Tüm YAML konfigürasyonları temizlendi! (${yamlConfigs.length} dosya kaldı)`
+  );
+  logger.info("💡 Artık yeni YAML dosyaları yükleyebilirsiniz");
+}
+function handleResetHtml() {
+  logger.info("🔄 HTML resetleniyor...");
+
+  currentHtml = "";
+
+  const htmlEditor = document.getElementById("htmlEditor");
+  if (htmlEditor) {
+    htmlEditor.value = "";
+  }
+
+  const htmlFileInput = document.getElementById("htmlFile");
+  if (htmlFileInput) {
+    htmlFileInput.value = "";
+  }
+
+  const htmlPreview = document.getElementById("htmlPreview");
+  if (htmlPreview) {
+    const doc =
+      htmlPreview.contentDocument || htmlPreview.contentWindow.document;
+    doc.open();
+    doc.write("");
+    doc.close();
+    logger.info("🧹 HTML önizlemesi temizlendi");
+  }
+
+  logger.success("✅ HTML başarıyla resetlendi!");
+  logger.info(
+    "💡 Artık yeni HTML dosyası yükleyebilir veya örnek HTML yükleyebilirsiniz"
+  );
+}
+
+function handleLoadSampleHtml() {
+  logger.info("📄 Örnek HTML yükleniyor...");
+  const sampleHtml = `<!DOCTYPE html>
+<html lang="tr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vision Bridge Test Sayfası</title>
+    <style>
+      .ad-banner {
+        background: red;
+        padding: 10px;
+        color: white;
+        text-align: center;
+      }
+      #header {
+        background: lightblue;
+        padding: 20px;
+      }
+      main {
+        padding: 20px;
+        background: lightgray;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="ad-banner">🎯 Bu reklam banner'ı KALDIRILACAK!</div>
+
+    <div id="header">
+      <h1>Eski Başlık</h1>
+      <p>Bu başlık değiştirilecek</p>
+    </div>
+
+    <main>
+      <h2>Ana İçerik</h2>
+      <p>Machine Learning teknolojisi harika!</p>
+      <p>Machine Learning ile çok şey yapabilirsiniz.</p>
+    </main>
+  </body>
+</html>
+`;
+  currentHtml = sampleHtml;
+  displayHtmlInEditor(sampleHtml);
+
+  logger.success("✅ Örnek HTML başarıyla yüklendi!");
+  logger.info(`📊 HTML uzunluğu: ${sampleHtml.length} karakter`);
+  logger.info(
+    "💡 Artık 'Örnek YAML Ekle' butonuna tıklayarak test edebilirsiniz!"
+  );
+}
+
+function handleAddSampleYaml() {
+  logger.info("📋 Örnek YAML konfigürasyonu ekleniyor...");
+
+  const sampleYaml = `
+  name: "Test Konfigürasyonu"
+  description: "HTML manipülasyon testi"
+  actions:
+    - type: remove
+      selector: ".ad-banner"
+  
+    - type: replace
+      selector: "#header h1"
+      newElement: "<h1>🌟 Yeni Başlık</h1>"
+  
+    - type: insert
+      position: "after"
+      target: "main"
+      element: "<footer>Vision Bridge ile oluşturuldu</footer>"
+  
+    - type: alter
+      oldValue: "Machine Learning"
+      newValue: "Yapay Zeka"
+      `;
+
+  yamlConfigs.push(sampleYaml);
+
+  updateYamlFilesList();
+
+  document.getElementById("yamlEditor").value = sampleYaml;
+
+  logger.success("✅ Örnek YAML eklendi!");
+  logger.info(`📊 Toplam YAML sayısı: ${yamlConfigs.length}`);
+}
+
+export { initializeApp };

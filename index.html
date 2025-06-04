@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>🌉 Vision Bridge - YAML DOM Manipulator</title>
-
+    <link rel="stylesheet" href="assets/styles/main.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js"></script>
   </head>
   <body>
@@ -13,41 +13,96 @@
         <h1>🌉 Vision Bridge</h1>
         <p>YAML tabanlı DOM Manipülasyon Aracı</p>
       </div>
-      <div class="main-content">
-        //HTML panel
-        <div class="panel">
-          <h3>📄 HTML YÖNETİMİ</h3>
-          <input type="file" id="htmlFile" accept=".html,.htm" />
-          <label for="htmlFile">📁 HTML Dosyası Seç</label>
-          <button id="loadSampleHtml">📝 Örnek HTML Yükle</button>
-          <button id="resetHtml">🔄 HTML'i Resetle</button>
-          <textarea
-            id="htmlEditor"
-            placeholder="HTML kodunuz buraya gelecek..."
-          ></textarea>
-        </div>
-        //YAML panel
-        <div class="panel">
-          <h3>⚙️ YAML Konfigürasyonu</h3>
-          <input type="file" id="yamlFiles" accept=".yaml,.yml" multiple />
-          <label for="yamlFiles">📁 YAML Dosyaları Seç</label>
-          <button id="addSampleYaml">⚙️ Örnek YAML Ekle</button>
-          <button id="clearYamls">🗑️ YAML'ları Temizle</button>
 
-          <div id="yamlFilesList">Henüz YAML dosyası eklenmedi</div>
-          <textarea
-            id="yamlEditor"
-            placeholder="YAML konfigürasyonunuz buraya gelecek..."
-          ></textarea>
-          <button id="applyYamlConfigs">🚀 YAML'ları Uygula</button>
-          //LOG panel
-          <div class="panel">
-            <h3>📋 İşlem Logları</h3>
-            <div id="logArea">Vision Bridge hazır! İşlem bekleniyor...</div>
-            <button id="clearLogs">🗑️ Logları Temizle</button>
+      <div class="main-layout">
+        <div class="left-section">
+          <div class="panel html-panel">
+            <div class="panel-header">
+              <h3>📄 HTML YÖNETİMİ</h3>
+              <div class="button-group">
+                <input
+                  type="file"
+                  id="htmlFile"
+                  accept=".html,.htm"
+                  style="display: none"
+                />
+                <label for="htmlFile" class="btn-file"
+                  >📁 HTML Dosyası Seç</label
+                >
+                <button id="loadSampleHtml">📝 Örnek HTML Yükle</button>
+                <button id="resetHtml">🔄 HTML'i Resetle</button>
+              </div>
+            </div>
+            <textarea
+              id="htmlEditor"
+              placeholder="HTML kodunız buraya gelecek..."
+            ></textarea>
+          </div>
+
+          <div class="panel yaml-panel">
+            <div class="panel-header">
+              <h3>⚙️ YAML Konfigürasyonu</h3>
+              <div class="button-group">
+                <input
+                  type="file"
+                  id="yamlFiles"
+                  accept=".yaml,.yml"
+                  multiple
+                  style="display: none"
+                />
+                <label for="yamlFiles" class="btn-file"
+                  >📁 YAML Dosyaları Seç</label
+                >
+                <button id="addSampleYaml">⚙️ Örnek YAML Ekle</button>
+                <button id="clearYamls">🗑️ YAML'ları Temizle</button>
+              </div>
+            </div>
+            <div id="yamlFilesList">Henüz YAML dosyası eklenmedi</div>
+            <textarea
+              id="yamlEditor"
+              placeholder="YAML konfigürasyonunuz buraya gelecek..."
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="right-section">
+          <div class="panel preview-panel">
+            <div class="panel-header">
+              <h3>👁️ HTML Önizleme / YAML Kullanım Çıktısı</h3>
+              <div class="button-group">
+                <button id="refreshPreview">🔄 Önizlemeyi Yenile</button>
+                <button id="openInNewTab">🔗 Yeni Sekmede Aç</button>
+                <button id="applyYamlConfigs">🚀 YAML'ları Uygula</button>
+              </div>
+            </div>
+            <div class="preview-container">
+              <iframe
+                id="htmlPreview"
+                sandbox="allow-scripts allow-same-origin allow-forms"
+                title="HTML Önizleme"
+              >
+              </iframe>
+            </div>
           </div>
         </div>
       </div>
+
+      <div class="bottom-section">
+        <div class="panel log-panel">
+          <div class="panel-header">
+            <h3>📋 İşlem Logları</h3>
+            <div class="button-group">
+              <button id="clearLogs">🗑️ Logları Temizle</button>
+            </div>
+          </div>
+          <div id="logArea">Vision Bridge hazır! İşlem bekleniyor...</div>
+        </div>
+      </div>
     </div>
+
+    <script type="module">
+      import { initializeApp } from "./src/main.js";
+      document.addEventListener("DOMContentLoaded", initializeApp);
+    </script>
   </body>
 </html>

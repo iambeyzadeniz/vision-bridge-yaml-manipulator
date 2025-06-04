@@ -1,3 +1,5 @@
+import { escapeHtml, formatTimestamp, generateId } from "../utils/helpers.js";
+
 function createLogger(containerId = "logArea") {
   const container = document.getElementById(containerId);
   const logs = [];
@@ -83,3 +85,4 @@ function createLogger(containerId = "logArea") {
     window.VisionBridge.createLogger = createLogger;
   }
 }
+export { createLogger };
